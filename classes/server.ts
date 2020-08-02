@@ -2,9 +2,8 @@ import express from 'express';
 
 
 export default class Server {
-    // default es para que cuando se exporte el archivo tome como defecto esta clase
     public app: express.Application;
-    public port: number = 3000;
+    public port: number = Number(process.env.PORT);
 
     constructor() {
         this.app = express();
