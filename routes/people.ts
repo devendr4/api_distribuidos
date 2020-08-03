@@ -63,7 +63,7 @@ people.put('/:id', (req: Request, res: Response) => {
 
 people.delete('/:id', (req: Request, res: Response) => {
     const id = req.params.id;
-    Person.findByIdAndUpdate(id, {status: 'disabled'}, {new: true, runValidators: true},
+    Person.findByIdAndUpdate(id, {status: 'disabled', deleted_date: new Date()}, {new: true, runValidators: true},
     (err, persona) => {
         if (err) {
             res.status(404).json({
