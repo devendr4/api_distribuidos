@@ -30,6 +30,7 @@ people.post('/', async (req: Request, res: Response) => {
                 ok: false,
                 error: err.message
             })
+            return;
         }
         res.status(201).json({
             ok: true,
@@ -52,6 +53,7 @@ people.put('/:id', (req: Request, res: Response) => {
                 ok: false,
                 error: err.message
             })
+            return;
         }
         res.json({
             ok: true,
@@ -70,6 +72,7 @@ people.delete('/:id', (req: Request, res: Response) => {
                 ok: false,
                 error: err.message
             })
+            return;
         }
         res.json({
             ok: true,
