@@ -1,22 +1,8 @@
-import mongoose, { Schema, model, Document } from 'mongoose';
+import mongoose, { Schema  } from 'mongoose';
+import {BaseEntity} from './baseEntity';
 
 
 const personSchema = new Schema({
-    status: {
-        type: String,
-        required: true,
-        enum: ['enabled', 'disabled'],
-        default: 'enabled'
-    },
-    created_date: {
-        type: Date,
-        required: true,
-        default: Date.now
-    },
-    deleted_date: {
-        type: Date,
-
-    },
     dni: {
         type: String,
         required: [true, 'La cedula es necesaria'],
@@ -38,16 +24,17 @@ const personSchema = new Schema({
     }
 
 });
-personSchema.path('dni').validate( async (value) => {
+
+personSchema.path('dni').validate( async (value:string) => {
     const dniCount = await mongoose.models.Person.countDocuments({
         dni: value});
     return !dniCount;
 }, 'dni ya existe')
 
-interface IPerson extends Document {
-    dni:string;
-    first_name:string;
-    last_name:string;
-}
-
-export const Person = model<IPerson>('Person', personSchema);
+personSchema.methods.toJSON = function() {
+    let obj = this.toObject();
+    delete obj.__v;
+    delete obj.__t;
+    return obj;
+};
+export const Person = BaseEntity.discriminator('Person', personSchema);
