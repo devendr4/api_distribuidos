@@ -24,7 +24,7 @@ people.post('/', async (req: Request, res: Response) => {
         first_name: req.body.first_name,
         last_name: req.body.last_name
     }
-    Person.create(person, (err, persona) => {
+    Person.create(person, (err:any, persona:any) => {
         if (err) {
             res.status(404).json({
                 ok: false,
@@ -46,8 +46,8 @@ people.put('/:id', (req: Request, res: Response) => {
         first_name: req.body.first_name,
         last_name: req.body.last_name
     }
-    Person.findByIdAndUpdate(id, person, {new: true, runValidators: true},
-    (err, persona) => {
+    Person.findByIdAndUpdate(id, person, {new: true, runValidators: true,context: 'query'},
+    (err:any, persona:any) => {
         if (err){
             res.status(404).json({
                 ok: false,
@@ -66,7 +66,7 @@ people.put('/:id', (req: Request, res: Response) => {
 people.delete('/:id', (req: Request, res: Response) => {
     const id = req.params.id;
     Person.findByIdAndUpdate(id, {status: 'disabled', deleted_date: new Date()}, {new: true, runValidators: true},
-    (err, persona) => {
+    (err:any, persona:any) => {
         if (err) {
             res.status(404).json({
                 ok: false,

@@ -1,6 +1,6 @@
 import mongoose, { Schema  } from 'mongoose';
 import {BaseEntity} from './base_entity';
-
+import uniqueValidator from 'mongoose-unique-validator';
 
 const personSchema = new Schema({
     dni: {
@@ -25,19 +25,12 @@ const personSchema = new Schema({
 
 });
 
-personSchema.path('dni').validate(async function  (value:string)  {
-    const dniCount = await mongoose.models.Person.countDocuments({
-        dni: value});
-    return !dniCount;
-}, 'dni ya existe')
+personSchema.plugin(uniqueValidator);
 
-personSchema.pre('findByIdAndUpdate', function(next){
-    console.log(this.dni);
-})
-//personSchema.methods.toJSON = function() {
-//    let obj = this.toObject();
-//    delete obj.__v;
-//    delete obj.__t;
-//    return obj;
-//};
+personSchema.methods.toJSON = function() {
+    let obj = this.toObject();
+    delete obj.__v;
+    delete obj.__t;
+    return obj;
+};
 export const Person = BaseEntity.discriminator('Person', personSchema);

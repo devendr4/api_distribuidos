@@ -45,7 +45,11 @@ sectionSchema.method('addEnrollment', function(enrollmentId: string):any{
         {$push: { enrollments: enrollmentId}},
         {new: true, useFindAndModify: false});
 });
-
-
+sectionSchema.methods.toJSON = function() {
+    let obj = this.toObject();
+    delete obj.__v;
+    delete obj.__t;
+    return obj;
+};
 
 export const Section = BaseEntity.discriminator('Section', sectionSchema);

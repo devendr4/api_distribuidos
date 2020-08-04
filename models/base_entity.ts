@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose';
 
+import uniqueValidator from 'mongoose-unique-validator';
 
 const baseEntitySchema = new Schema({
     status: {
@@ -27,5 +28,5 @@ const baseEntitySchema = new Schema({
         maxlength: [50, 'Descripcion excede los caracteres']
     }
 });
-
+baseEntitySchema.plugin(uniqueValidator);
 export const BaseEntity = model('BaseEntity', baseEntitySchema);
