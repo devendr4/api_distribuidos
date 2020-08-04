@@ -1,5 +1,5 @@
 import mongoose, { Schema  } from 'mongoose';
-import {Entity} from './entity';
+import {BaseEntity} from './base_entity';
 
 const facultySchema = new Schema({
 	school: {
@@ -9,4 +9,4 @@ const facultySchema = new Schema({
 	}
 });
 
-export const Faculty = Entity.discriminator('Faculty', facultySchema);
+export const Faculty = BaseEntity.discriminator('Faculty', facultySchema);

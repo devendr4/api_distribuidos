@@ -25,16 +25,19 @@ const personSchema = new Schema({
 
 });
 
-personSchema.path('dni').validate( async (value:string) => {
+personSchema.path('dni').validate(async function  (value:string)  {
     const dniCount = await mongoose.models.Person.countDocuments({
         dni: value});
     return !dniCount;
 }, 'dni ya existe')
 
-personSchema.methods.toJSON = function() {
-    let obj = this.toObject();
-    delete obj.__v;
-    delete obj.__t;
-    return obj;
-};
+personSchema.pre('findByIdAndUpdate', function(next){
+    console.log(this.dni);
+})
+//personSchema.methods.toJSON = function() {
+//    let obj = this.toObject();
+//    delete obj.__v;
+//    delete obj.__t;
+//    return obj;
+//};
 export const Person = BaseEntity.discriminator('Person', personSchema);

@@ -16,6 +16,15 @@ const baseEntitySchema = new Schema({
     deleted_date: {
         type: Date,
 
+    },
+    name: {
+        type: String,
+        unique: [true, 'El nombre ya existe'],
+    },
+    description: {
+        type: String,
+        minlength: [5, 'La descripcion debe tener minimo 5 caracteres'],
+        maxlength: [50, 'Descripcion excede los caracteres']
     }
 });
 
