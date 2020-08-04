@@ -1,6 +1,12 @@
-import mongoose, { Schema  } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import {Entity} from './entity';
 
-const facultySchema = new Schema({});
+const schoolSchema = new Schema({
+	section: {
+		type: Schema.Types.ObjectId,
+		ref: 'Section',
+		required: [true, 'Debe contar con una sección'] 
+	}
+});
 
-export const Faculty = Entity.discriminator('Faculty', facultySchema);
+export const School = Entity.discriminator('Faculty', schoolSchema);
