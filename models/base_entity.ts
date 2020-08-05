@@ -21,11 +21,12 @@ const baseEntitySchema = new Schema({
     name: {
         type: String,
         unique: [true, 'El nombre ya existe'],
+        sparse: true
     },
     description: {
         type: String,
         minlength: [5, 'La descripcion debe tener minimo 5 caracteres'],
-        maxlength: [50, 'Descripcion excede los caracteres']
+        maxlength: [100, 'Descripcion excede los caracteres']
     }
 });
 baseEntitySchema.plugin(uniqueValidator);
