@@ -19,18 +19,12 @@ mongoose.connect(
     }
 );
 
-const person = {
-    dni: 'V848483',
-    first_name: 'juan',
-    last_name: 'ajsjsjs'
-}
+
 
 const crear = async () => {
     //const persona = await Person.create(person)
-    let persi:any;
-    Person.create(person).then( persona => {console.log(persona); persi = persona}).catch(err => console.log(err))
-    const enrollment = await Enrollment.create({person: persi._id , type: 'student'})
-    const enrollmenta = await Enrollment.create({person: persi._id, type: 'student'})
+    const enrollment = await Enrollment.create({person: "5f29b4896d74c4418c2353d3" , type: 'student'})
+    const enrollmenta = await Enrollment.create({person: "5f29b4896d74c4418c2353d3", type: 'teacher'})
     const section:any= await Section.create(
         {
             uc: 14,

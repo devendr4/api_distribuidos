@@ -34,17 +34,21 @@ const sectionSchema = new Schema({
         default: 0.0
 
     },
-    enrollments: [{
+    school: {
         type: Schema.Types.ObjectId,
-        ref: 'Enrollment'
-    }]
+        ref: 'School'
+    }
+//    enrollments: [{
+//        type: Schema.Types.ObjectId,
+//        ref: 'Enrollment'
+//    }]
 });
 
-sectionSchema.method('addEnrollment', function(enrollmentId: string):any{
-    return mongoose.models.Section.findByIdAndUpdate(this._id,
-        {$push: { enrollments: enrollmentId}},
-        {new: true, useFindAndModify: false});
-});
+//sectionSchema.method('addEnrollment', function(enrollmentId: string):any{
+//    return mongoose.models.Section.findByIdAndUpdate(this._id,
+//        {$push: { enrollments: enrollmentId}},
+//        {new: true, useFindAndModify: false});
+//});
 sectionSchema.methods.toJSON = function() {
     let obj = this.toObject();
     delete obj.__v;

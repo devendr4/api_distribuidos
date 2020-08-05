@@ -12,13 +12,18 @@ const enrollmentSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Person',
         required: [true, 'Es necesario una persona para la incripcion']
+    },
+    section: {
+        type: Schema.Types.ObjectId,
+        ref: 'Section',
+        required: [true, 'Es necesario la seccion para la inscripcion']
     }
 });
 
-//enrollmentSchema.methods.toJSON = function() {
-//    let obj = this.toObject();
-//    delete obj.__v;
-//    delete obj.__t;
-//    return obj;
-//};
+enrollmentSchema.methods.toJSON = function() {
+    let obj = this.toObject();
+    delete obj.__v;
+    delete obj.__t;
+    return obj;
+};
 export const Enrollment  = BaseEntity.discriminator('Enrollment', enrollmentSchema);

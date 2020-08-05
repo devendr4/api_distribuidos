@@ -1,5 +1,6 @@
 import express from 'express';
 import people from './people';
+import enrollments from './enrollments';
 import sections from './sections';
 import schools from './schools';
 import faculties from './faculties';
@@ -9,4 +10,5 @@ router.use('/people', people);
 router.use('/sections', sections);
 router.use('/schools', schools);
 router.use('/faculties', faculties);
+router.use('/enrollments', enrollments);
 

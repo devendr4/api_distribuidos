@@ -1,12 +1,13 @@
 import {Router, Request, Response} from "express";
 import {Section} from "../models/section";
+import {Enrollment} from "../models/enrollment";
 
 const sections = Router();
 
 sections.get('/', async (req: Request, res: Response) => {
     const page = Number(req.query.page) || 1;
     const skip = (page - 1) * 10;
-    const sections = await Section.find({status: 'enabled'})
+    let sections = await Section.find({status: 'enabled'},{enrollments: 0})
                                .skip(skip)
                                .limit(10)
                                .exec();
@@ -17,8 +18,23 @@ sections.get('/', async (req: Request, res: Response) => {
     })
 })
 
+sections.get('/:id/teachers', async( req: Request, res: Response) => {
+    const id = req.params.id;
+    let teachers;
+    const sections = await Section.find({status: 'enabled', _id: id}).exec();
+    if(sections){
+        teachers = sections.filter(section => {
+            section
+        })
+    }
+});
+
+sections.get('/:id/students',( req: Request, res: Response) => {
+
+});
 // /sections/
 sections.post('/', async (req: Request, res: Response) => {
+    // falta colocar el atributo school
     const section = {
         name: req.body.name,
         description: req.body.description,
