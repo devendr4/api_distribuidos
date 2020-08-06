@@ -34,4 +34,45 @@ schools.post('/', async (req: Request, res: Response) => {
 			})	
 	})
 })
+
+schools.put('/:id', (req: Request, res: Response)=>{
+	const id = req.params.id;
+	const school = {
+		name: req.body.name,
+		description: req.body.description
+	}
+	School.findByIdAndUpdate(id, school, {new: true, runValidators: true, context: 'query'},
+    (err:any, school:any) => {
+        if (err){
+            res.status(404).json({
+                ok: false,
+                error: err.message
+            })
+            return;
+        }
+        res.json({
+            ok: true,
+            school: school 
+        })
+    });
+
+});
+
+schools.delete('/:id', (req: Request, res: Response) => {
+	const id = req.params.id;
+	School.findByIdAndUpdate(id, {status:'disabled',deleted_date: new Date()}, {new: true, runValidators: true},
+	(err: any, school: any) => {
+        if (err) {
+            res.status(404).json({
+                ok: false,
+                error: err.message
+            })
+            return;
+        }
+        res.json({
+            ok: true,
+            school: school 
+        })
+    });
+})
 export default schools;

@@ -9,10 +9,10 @@ const schoolSchema = new Schema({
 	}
 });
 
-/*schoolSchema.methods.toJSON = function() {
+schoolSchema.methods.toJSON = function() {
     let obj = this.toObject();
     delete obj.__v;
     delete obj.__t;
     return obj;
-};*/
+};
 export const School = BaseEntity.discriminator('School', schoolSchema);

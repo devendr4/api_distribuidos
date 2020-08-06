@@ -1,6 +1,6 @@
 import {Router, Request, Response} from "express";
 import {Faculty} from "../models/faculty";
-
+import {School} from "../models/school";
 const faculties = Router();
 
 faculties.get('/', async (req: Request, res: Response) => {
@@ -41,7 +41,7 @@ faculties.put('/:id', (req: Request, res: Response)=>{
 	const id = req.params.id;
 	const faculty = {
 		name: req.body.name,
-		description: req.body.description
+		description: req.body.description,
 	}
 	Faculty.findByIdAndUpdate(id, faculty, {new: true, runValidators: true, context: 'query'},
     (err:any, faculty:any) => {
@@ -54,7 +54,7 @@ faculties.put('/:id', (req: Request, res: Response)=>{
         }
         res.json({
             ok: true,
-            person: faculty 
+            faculty: faculty 
         })
     });
 
@@ -63,7 +63,7 @@ faculties.put('/:id', (req: Request, res: Response)=>{
 faculties.delete('/:id', (req: Request, res: Response) => {
 	const id = req.params.id;
 	Faculty.findByIdAndUpdate(id, {status:'disabled',deleted_date: new Date()}, {new: true, runValidators: true},
-	(err: any, faculty: any) => {
+	async(err: any, faculty: any) => {
         if (err) {
             res.status(404).json({
                 ok: false,
@@ -75,6 +75,7 @@ faculties.delete('/:id', (req: Request, res: Response) => {
             ok: true,
             faculty: faculty
         })
+		await School.updateMany({faculty: id},{status:'disabled',deleted_date: new Date()});
     });
 })
 export default faculties;

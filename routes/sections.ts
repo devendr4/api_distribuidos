@@ -64,7 +64,8 @@ sections.post('/', async (req: Request, res: Response) => {
         type: req.body.type,
         ht: req.body.ht,
         hp: req.body.hp,
-        hl: req.body.hl
+        hl: req.body.hl,
+		school: req.body.school
     }
     Section.create(section, (err:any, seccion:any) => {
         if (err) {
