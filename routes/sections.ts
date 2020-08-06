@@ -18,13 +18,34 @@ sections.get('/', async (req: Request, res: Response) => {
     })
 })
 
-sections.get('/:id/teachers', async( req: Request, res: Response) => {
+sections.get('/:id/:type', async ( req: Request, res: Response) => {
     const id = req.params.id;
-    let teachers;
-    const sections = await Section.find({status: 'enabled', _id: id}).exec();
-    if(sections){
-        teachers = sections.filter(section => {
-            section
+    const type = req.params.type;
+    if (type !== 'teachers' && type !== 'students'){
+        res.status(404).json({
+            ok: false,
+            error: 'Opcion invalida'
+        })
+        return;
+    }
+    const section:any = await Section.findOne({_id: id, status: 'enabled'}).exec();
+    if (section) {
+        const enrollments = await Enrollment.find({section: id, type: type.slice(0,-1), status: 'enabled'}, 'person')
+                                            .populate('person', 'dni first_name last_name')
+        let people: any[] = [];
+        enrollments.forEach((enrollment:any) => {
+            people.unshift(enrollment.person);
+        })
+        let object:any = {
+            ok:true,
+            section: section.name
+        }
+        object[type] = people
+        res.json(object)
+    }else{
+        res.json({
+            ok: false,
+            error: 'La seccion no existe'
         })
     }
 });

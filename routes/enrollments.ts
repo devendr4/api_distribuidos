@@ -5,6 +5,21 @@ import {Section} from "../models/section";
 
 const enrollments = Router();
 
+enrollments.get('/', async (req: Request, res: Response) => {
+    const page = Number(req.query.page) || 1;
+    const skip = (page - 1) * 10;
+    const enrollments = await Enrollment.find({status: 'enabled'}, 'type section person')
+                                  .populate('section','name')
+                                  .populate('person', 'dni first_name last_name')
+                                  .skip(skip)
+                                  .limit(10)
+                                  .exec();
+    res.json({
+        ok: true,
+        page,
+        enrollments
+    })
+})
 // /enrollments/
 enrollments.post('/', async (req: Request, res: Response) => {
     let persona:any, seccion:any;
