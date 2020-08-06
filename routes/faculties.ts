@@ -19,8 +19,62 @@ faculties.get('/', async (req: Request, res: Response) => {
 
 faculties.post('/', async(req: Request, res: Response)=> {
 	const faculty = {
-		
+		name: req.body.name,
+		description: req.body.description
 	}
-})
+	Faculty.create(faculty, (err:any, faculty:any)=>{
+		if (err) {
+			res.status(404).json({
+				ok: false,
+				error: err.message
+			})
+			return;
+		}
+		res.status(201).json({
+			ok: true,
+			faculty: faculty
+		})
+	})
+});
 
+faculties.put('/:id', (req: Request, res: Response)=>{
+	const id = req.params.id;
+	const faculty = {
+		name: req.body.name,
+		description: req.body.description
+	}
+	Faculty.findByIdAndUpdate(id, faculty, {new: true, runValidators: true, context: 'query'},
+    (err:any, faculty:any) => {
+        if (err){
+            res.status(404).json({
+                ok: false,
+                error: err.message
+            })
+            return;
+        }
+        res.json({
+            ok: true,
+            person: faculty 
+        })
+    });
+
+});
+
+faculties.delete('/:id', (req: Request, res: Response) => {
+	const id = req.params.id;
+	Faculty.findByIdAndUpdate(id, {status:'disabled',deleted_date: new Date()}, {new: true, runValidators: true},
+	(err: any, faculty: any) => {
+        if (err) {
+            res.status(404).json({
+                ok: false,
+                error: err.message
+            })
+            return;
+        }
+        res.json({
+            ok: true,
+            faculty: faculty
+        })
+    });
+})
 export default faculties;

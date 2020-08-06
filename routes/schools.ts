@@ -18,7 +18,7 @@ schools.post('/', async (req: Request, res: Response) => {
 	const school = {
 		name: req.body.name,
 		description: req.body.last_name,
-		section: req.body.section
+		faculty: req.body.faculty
 	}
 	School.create(school, (err:any, school:any)=> {
 		if (err) {
