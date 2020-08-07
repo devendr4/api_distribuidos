@@ -1,6 +1,7 @@
 import {Router, Request, Response} from "express";
 import {Section} from "../models/section";
 import {Enrollment} from "../models/enrollment";
+import {School} from "../models/school";
 
 const sections = Router();
 
@@ -54,7 +55,7 @@ sections.get('/:id/:type', async ( req: Request, res: Response) => {
 // /sections/
 sections.post('/', async (req: Request, res: Response) => {
     // falta colocar el atributo school
-    const section = {
+    const section:any = {
         name: req.body.name,
         description: req.body.description,
         uc: req.body.uc,
@@ -65,19 +66,50 @@ sections.post('/', async (req: Request, res: Response) => {
         hl: req.body.hl,
 		school: req.body.school
     }
-    Section.create(section, (err:any, seccion:any) => {
-        if (err) {
-            res.status(404).json({
-                ok: false,
-                error: err.message
+    const name:any = await Section.findOne({status: 'disabled', name: section.name}).exec();
+
+    const school = await School.findOne({_id: section.school, status: 'enabled'}).exec();
+    if (school){
+        if (name){
+            section.status = 'enabled';
+            section.deleted_date = undefined;
+            Section.findByIdAndUpdate(name._id, section, {new: true, runValidators: true, context: 'query'},
+            async (err:any, seccion:any) => {
+                if (err){
+                    res.status(404).json({
+                        ok: false,
+                        error: err.message
+                    })
+                    return;
+                }
+                await seccion.populate('school','name').execPopulate();
+                res.json({
+                    ok: true,
+                    section: seccion
+                })
+            });
+        }else {
+            Section.create(section,async (err:any, seccion:any) => {
+                if (err) {
+                    res.status(404).json({
+                        ok: false,
+                        error: err.message
+                    })
+                    return;
+                }
+                await seccion.populate('school','name').execPopulate();
+                res.status(201).json({
+                    ok: true,
+                    section: seccion
+                })
             })
-            return;
         }
-        res.status(201).json({
-            ok: true,
-            section: seccion
+    }else {
+        res.status(404).json({
+            ok: false,
+            error: 'Escuela no existe'
         })
-    })
+    }
 });
 
 sections.put('/:id', (req: Request, res: Response) => {

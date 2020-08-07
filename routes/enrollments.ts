@@ -47,11 +47,8 @@ enrollments.post('/', async (req: Request, res: Response) => {
             return;
         }
     }
-    console.log(persona)
-    console.log(seccion)
     const exist:any = await Enrollment.findOne(
         {status: 'enabled', section: enrollment.section, person: enrollment.person}).exec();
-    console.log(exist);
     if (exist) {
         res.status(404).json({
             ok: false,

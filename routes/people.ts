@@ -25,19 +25,44 @@ people.post('/', async (req: Request, res: Response) => {
         first_name: req.body.first_name,
         last_name: req.body.last_name
     }
-    Person.create(person, (err:any, persona:any) => {
-        if (err) {
-            res.status(404).json({
-                ok: false,
-                error: err.message
+    const dni:any = await Person.findOne({ dni: person.dni, status: 'disabled'}).exec()
+
+    if (dni){
+        dni.first_name = person.first_name;
+        dni.last_name = person.last_name;
+        dni.deleted_date = undefined;
+        dni.status = 'enabled';
+         dni.save((err:any, dni:any) => {
+            if (err) {
+
+                res.status(404).json({
+                    ok: false,
+                    error: err.message
+                })
+            return;
+            }
+            res.status(201).json({
+                ok: true,
+                person: dni
             })
             return;
-        }
-        res.status(201).json({
-            ok: true,
-            person: persona
         })
-    })
+    }
+    else{
+        Person.create(person, (err:any, persona:any) => {
+            if (err) {
+                res.status(404).json({
+                    ok: false,
+                    error: err.message
+                })
+                return;
+            }
+            res.status(201).json({
+                ok: true,
+                person: persona
+            })
+        })
+    }
 });
 
 people.put('/:id', (req: Request, res: Response) => {
