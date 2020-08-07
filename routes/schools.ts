@@ -1,12 +1,13 @@
 import {Router, Request, Response} from "express";
 import {School} from "../models/school";
+import {Section} from "../models/section";
 
 const schools = Router();
 
 schools.get('/',async(req: Request, res: Response) => {
 	const page = Number(req.query.page) || 1;
 	const skip = (page -1) * 10;
-	const schools = await School.find({status:'enabled'}).skip(skip).limit(10).exec();
+	const schools = await School.find({status:'enabled'}).populate('faculty', 'name').skip(skip).limit(10).exec();
 							res.json({
 								ok: true,
 								page,
@@ -31,7 +32,7 @@ schools.post('/', async (req: Request, res: Response) => {
 			res.status(201).json({
 				ok: true,
 				school: school
-			})	
+			})
 	})
 })
 
@@ -52,7 +53,7 @@ schools.put('/:id', (req: Request, res: Response)=>{
         }
         res.json({
             ok: true,
-            school: school 
+            school: school
         })
     });
 
@@ -71,8 +72,9 @@ schools.delete('/:id', (req: Request, res: Response) => {
         }
         res.json({
             ok: true,
-            school: school 
+            school: school
         })
+        Section.disableMany(id);
     });
 })
 export default schools;

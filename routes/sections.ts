@@ -8,6 +8,7 @@ sections.get('/', async (req: Request, res: Response) => {
     const page = Number(req.query.page) || 1;
     const skip = (page - 1) * 10;
     let sections = await Section.find({status: 'enabled'},{enrollments: 0})
+                               .populate('school','name')
                                .skip(skip)
                                .limit(10)
                                .exec();

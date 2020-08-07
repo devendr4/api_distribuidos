@@ -37,13 +37,14 @@ const sectionSchema = new Schema({
     },
     school: {
         type: Schema.Types.ObjectId,
-        ref: 'School'
+        ref: 'School',
+        required: true,
     }
 });
 
 sectionSchema.statics.disableMany = async function disableMany( id: string){
     const sections = await this.find({school: id}, '_id').exec();
-    sections.forEach((section:any) => Enrollment.disableMany(section._id));
+    sections.forEach((section:any) => Enrollment.disableMany('section', section._id));
     await this.updateMany({school: id},{status: 'disabled', deleted_date: new Date()});
 }
 
