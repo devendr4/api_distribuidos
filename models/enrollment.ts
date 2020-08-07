@@ -20,6 +20,12 @@ const enrollmentSchema = new Schema({
     }
 });
 
+enrollmentSchema.statics.disableMany = async function disableMany(type:string, id: string){
+    let object:any = {}
+    object[type] = id
+    await this.updateMany(object,{status: 'disabled', deleted_date: new Date()});
+}
+
 enrollmentSchema.methods.toJSON = function() {
     let obj = this.toObject();
     delete obj.__v;

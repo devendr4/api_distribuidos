@@ -50,9 +50,6 @@ sections.get('/:id/:type', async ( req: Request, res: Response) => {
     }
 });
 
-sections.get('/:id/students',( req: Request, res: Response) => {
-
-});
 // /sections/
 sections.post('/', async (req: Request, res: Response) => {
     // falta colocar el atributo school
@@ -111,10 +108,10 @@ sections.put('/:id', (req: Request, res: Response) => {
 
 });
 
-sections.delete('/:id', (req: Request, res: Response) => {
+sections.delete('/:id', async (req: Request, res: Response) => {
     const id = req.params.id;
     Section.findByIdAndUpdate(id, {status: 'disabled', deleted_date: new Date()}, {new: true, runValidators: true},
-    (err:any, seccion:any) => {
+     async (err:any, seccion:any) => {
         if (err) {
             res.status(404).json({
                 ok: false,
@@ -126,6 +123,7 @@ sections.delete('/:id', (req: Request, res: Response) => {
             ok: true,
             section: seccion
         })
+        Enrollment.disableMany('section', id);
     });
 })
 export default sections;

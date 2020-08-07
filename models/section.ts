@@ -1,5 +1,6 @@
-import mongoose, { Schema, model  } from 'mongoose';
+import  { Schema } from 'mongoose';
 import {BaseEntity} from './base_entity';
+import {Enrollment} from './enrollment';
 
 const sectionSchema = new Schema({
 	uc: {
@@ -38,17 +39,14 @@ const sectionSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'School'
     }
-//    enrollments: [{
-//        type: Schema.Types.ObjectId,
-//        ref: 'Enrollment'
-//    }]
 });
 
-//sectionSchema.method('addEnrollment', function(enrollmentId: string):any{
-//    return mongoose.models.Section.findByIdAndUpdate(this._id,
-//        {$push: { enrollments: enrollmentId}},
-//        {new: true, useFindAndModify: false});
-//});
+sectionSchema.statics.disableMany = async function disableMany( id: string){
+    const sections = await this.find({school: id}, '_id').exec();
+    sections.forEach((section:any) => Enrollment.disableMany(section._id));
+    await this.updateMany({school: id},{status: 'disabled', deleted_date: new Date()});
+}
+
 sectionSchema.methods.toJSON = function() {
     let obj = this.toObject();
     delete obj.__v;

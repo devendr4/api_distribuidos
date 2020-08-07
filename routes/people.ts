@@ -1,5 +1,6 @@
 import {Router, Request, Response} from "express";
 import {Person} from "../models/person";
+import {Enrollment} from "../models/enrollment";
 
 const people = Router();
 
@@ -63,10 +64,11 @@ people.put('/:id', (req: Request, res: Response) => {
 
 });
 
-people.delete('/:id', (req: Request, res: Response) => {
+people.delete('/:id',  (req: Request, res: Response) => {
     const id = req.params.id;
     Person.findByIdAndUpdate(id, {status: 'disabled', deleted_date: new Date()}, {new: true, runValidators: true},
-    (err:any, persona:any) => {
+    async(err:any, persona:any) => {
+
         if (err) {
             res.status(404).json({
                 ok: false,
@@ -78,7 +80,9 @@ people.delete('/:id', (req: Request, res: Response) => {
             ok: true,
             person: persona
         })
+        Enrollment.disableMany('person', id);
     });
+
 })
 export default people;
 
