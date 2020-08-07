@@ -1,80 +1,14 @@
-import {Router, Request, Response} from "express";
-import {School} from "../models/school";
-import {Section} from "../models/section";
+import {Router} from "express";
+import * as school_controller from "../controllers/schoolController";
 
 const schools = Router();
 
-schools.get('/',async(req: Request, res: Response) => {
-	const page = Number(req.query.page) || 1;
-	const skip = (page -1) * 10;
-	const schools = await School.find({status:'enabled'}).populate('faculty', 'name').skip(skip).limit(10).exec();
-							res.json({
-								ok: true,
-								page,
-								schools
-							})
-})
-//school/
-schools.post('/', async (req: Request, res: Response) => {
-	const school = {
-		name: req.body.name,
-		description: req.body.last_name,
-		faculty: req.body.faculty
-	}
-	School.create(school, (err:any, school:any)=> {
-		if (err) {
-			res.status(404).json({
-				ok: false,
-				error: err.message
-			})
-			return;
-			}
-			res.status(201).json({
-				ok: true,
-				school: school
-			})
-	})
-})
+schools.get('/',school_controller.school_list)
 
-schools.put('/:id', (req: Request, res: Response)=>{
-	const id = req.params.id;
-	const school = {
-		name: req.body.name,
-		description: req.body.description
-	}
-	School.findByIdAndUpdate(id, school, {new: true, runValidators: true, context: 'query'},
-    (err:any, school:any) => {
-        if (err){
-            res.status(404).json({
-                ok: false,
-                error: err.message
-            })
-            return;
-        }
-        res.json({
-            ok: true,
-            school: school
-        })
-    });
+schools.post('/',school_controller.create_school)
 
-});
+schools.put('/:id',school_controller.update_school)
 
-schools.delete('/:id', (req: Request, res: Response) => {
-	const id = req.params.id;
-	School.findByIdAndUpdate(id, {status:'disabled',deleted_date: new Date()}, {new: true, runValidators: true},
-	(err: any, school: any) => {
-        if (err) {
-            res.status(404).json({
-                ok: false,
-                error: err.message
-            })
-            return;
-        }
-        res.json({
-            ok: true,
-            school: school
-        })
-        Section.disableMany(id);
-    });
-})
+schools.delete('/:id', school_controller.disable_school)
+
 export default schools;

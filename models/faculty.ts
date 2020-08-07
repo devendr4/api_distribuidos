@@ -4,7 +4,6 @@ import {BaseEntity} from './base_entity';
 const facultySchema = new Schema({
 });
 
-
 facultySchema.methods.toJSON = function() {
     let obj = this.toObject();
     delete obj.__v;
