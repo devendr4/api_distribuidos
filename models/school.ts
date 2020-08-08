@@ -12,6 +12,7 @@ const schoolSchema = new Schema({
 schoolSchema.methods.toJSON = function() {
     let obj = this.toObject();
     delete obj.__v;
+	//delete obj.faculty._id;
     delete obj.__t;
     return obj;
 };

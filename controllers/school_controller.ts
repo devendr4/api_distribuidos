@@ -32,7 +32,7 @@ export const create_school = async (req: Request, res: Response) => {
 			school: school
 		})
 	})	
-	//validate_faculty(school.faculty)
+	validate_faculty(school.faculty)
 }
 
 export const update_school = (req: Request, res: Response) => {
@@ -72,7 +72,7 @@ export const disable_school = (req: Request, res: Response) => {
             ok: true,
             school: school
         })
-        Section.disableMany(id);
+        //Section.disableMany(id);
     });
 }
 

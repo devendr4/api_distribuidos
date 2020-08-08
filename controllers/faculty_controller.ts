@@ -1,6 +1,7 @@
 import {Faculty} from '../models/faculty'
 import {Request, Response} from "express"
 import {School} from "../models/school"
+
 export const faculty_list = async (req: Request, res: Response) => {	
 	const page = Number(req.query.page) || 1;
 	const skip = (page -1) * 10;
@@ -74,4 +75,9 @@ export const disable_faculty = (req: Request, res: Response) => {
         })
 		await School.updateMany({faculty: id},{status:'disabled',deleted_date: new Date()});
     })
+}
+
+export const validate_faculty = (id: any) => {
+	const a = Faculty.findById(id).exec()
+	console.log(a) 
 }
