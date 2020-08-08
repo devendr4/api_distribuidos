@@ -1,5 +1,5 @@
 import {Router, Request, Response} from "express";
-import {Person} from "../models/person";
+import {Person } from "../models/person";
 import {Enrollment} from "../models/enrollment";
 
 const people = Router();
@@ -20,7 +20,7 @@ people.get('/', async (req: Request, res: Response) => {
 
 // /people/
 people.post('/', async (req: Request, res: Response) => {
-    const person = {
+    const person: any = {
         dni: req.body.dni,
         first_name: req.body.first_name,
         last_name: req.body.last_name
@@ -32,7 +32,7 @@ people.post('/', async (req: Request, res: Response) => {
         dni.last_name = person.last_name;
         dni.deleted_date = undefined;
         dni.status = 'enabled';
-         dni.save((err:any, dni:any) => {
+        dni.save((err:any, dni:any) => {
             if (err) {
 
                 res.status(404).json({

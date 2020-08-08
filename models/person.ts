@@ -1,5 +1,5 @@
-import mongoose, { Schema  } from 'mongoose';
-import {BaseEntity} from './base_entity';
+import  { Schema, Model } from 'mongoose';
+import {BaseEntity, IBaseEntity} from './base_entity';
 import uniqueValidator from 'mongoose-unique-validator';
 
 const personSchema = new Schema({
@@ -33,4 +33,11 @@ personSchema.methods.toJSON = function() {
     delete obj.__t;
     return obj;
 };
-export const Person = BaseEntity.discriminator('Person', personSchema);
+export interface IPerson extends IBaseEntity {
+    dni: string;
+    first_name: string;
+    last_name: string;
+
+}
+
+export const Person = BaseEntity.discriminator< IPerson>('Person', personSchema);

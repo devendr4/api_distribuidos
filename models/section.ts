@@ -1,5 +1,5 @@
-import  { Schema } from 'mongoose';
-import {BaseEntity} from './base_entity';
+import  {Model, Schema } from 'mongoose';
+import {BaseEntity, IBaseEntity} from './base_entity';
 import {Enrollment} from './enrollment';
 
 const sectionSchema = new Schema({
@@ -55,4 +55,19 @@ sectionSchema.methods.toJSON = function() {
     return obj;
 };
 
-export const Section = BaseEntity.discriminator('Section', sectionSchema);
+interface ISection extends IBaseEntity {
+    type: string;
+    school: string;
+    uc: number;
+    semester: number;
+    ht: number;
+    hl: number;
+    hp: number;
+
+}
+
+interface ISectionStatic extends Model<ISection> {
+    disableMany(id:string):void;
+}
+
+export const Section = BaseEntity.discriminator<ISection, ISectionStatic>('Section', sectionSchema);

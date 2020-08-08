@@ -112,7 +112,7 @@ sections.post('/', async (req: Request, res: Response) => {
     }
 });
 
-sections.put('/:id', (req: Request, res: Response) => {
+sections.put('/:id',async (req: Request, res: Response) => {
     const id = req.params.id;
     const section = {
         name: req.body.name,
@@ -122,23 +122,36 @@ sections.put('/:id', (req: Request, res: Response) => {
         type: req.body.type,
         ht: req.body.ht || 0.0,
         hp: req.body.hp || 0.0,
-        hl: req.body.hl || 0.0
+        hl: req.body.hl || 0.0,
+        school: req.body.school || undefined
     }
 
-    Section.findByIdAndUpdate(id, section, {new: true, runValidators: true, context: 'query'},
-    (err:any, seccion:any) => {
-        if (err){
-            res.status(404).json({
-                ok: false,
-                error: err.message
+    const school = await School.findOne({_id: section.school, status: 'enabled'}).exec();
+    console.log(school)
+    if(school){
+        Section.findByIdAndUpdate(id, section, {new: true, runValidators: true, context: 'query'},
+        async(err:any, seccion:any) => {
+            if (err){
+                res.status(404).json({
+                    ok: false,
+                    error: err.message
+                })
+                return;
+            }
+
+            await seccion.populate('school','name').execPopulate();
+            res.json({
+                ok: true,
+                section: seccion
             })
-            return;
-        }
-        res.json({
-            ok: true,
-            section: seccion
+        });
+
+    }else{
+        res.status(404).json({
+            ok: false,
+            error: 'La escuela no existe'
         })
-    });
+    }
 
 });
 

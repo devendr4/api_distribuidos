@@ -23,9 +23,9 @@ enrollments.get('/', async (req: Request, res: Response) => {
 // /enrollments/
 enrollments.post('/', async (req: Request, res: Response) => {
     let persona:any, seccion:any;
-    let enrollment = {
-        section: req.body.section || 0,
-        person: req.body.person || 0,
+    let enrollment:any = {
+        section: req.body.section || "0",
+        person: req.body.person || "0",
         type: req.body.type
     }
     try {

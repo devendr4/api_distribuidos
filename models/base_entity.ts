@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import {Document, Schema, model } from 'mongoose';
 
 import uniqueValidator from 'mongoose-unique-validator';
 
@@ -29,5 +29,13 @@ const baseEntitySchema = new Schema({
         maxlength: [100, 'Descripcion excede los caracteres']
     }
 });
+
+export interface IBaseEntity extends Document {
+    status: string;
+    created_date: Date;
+    deleted_date?: Date;
+    name?: string;
+    description?: string;
+}
 baseEntitySchema.plugin(uniqueValidator);
-export const BaseEntity = model('BaseEntity', baseEntitySchema);
+export const BaseEntity = model<IBaseEntity>('BaseEntity', baseEntitySchema);

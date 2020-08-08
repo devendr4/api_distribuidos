@@ -1,5 +1,5 @@
-import { Schema  } from 'mongoose';
-import {BaseEntity} from './base_entity';
+import { Schema, Model  } from 'mongoose';
+import {BaseEntity, IBaseEntity} from './base_entity';
 
 
 const enrollmentSchema = new Schema({
@@ -32,4 +32,14 @@ enrollmentSchema.methods.toJSON = function() {
     delete obj.__t;
     return obj;
 };
-export const Enrollment  = BaseEntity.discriminator('Enrollment', enrollmentSchema);
+interface IEnrollment extends IBaseEntity {
+    type: string;
+    person: string;
+    section: string;
+
+}
+
+interface IEnrollmentStatic extends Model<IEnrollment> {
+    disableMany(type:string, id:string):void;
+}
+export const Enrollment  = BaseEntity.discriminator<IEnrollment, IEnrollmentStatic>('Enrollment', enrollmentSchema);
