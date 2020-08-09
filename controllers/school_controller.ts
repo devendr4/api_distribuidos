@@ -11,7 +11,7 @@ export const school_list = async (req: Request, res: Response) => {
 	.skip(skip)
 	.limit(10)
 	.exec()
-	responses.success(schools,res,page)
+	responses.success({schools},res,page)
 }
 
 export const create_school = async (req: Request, res: Response) => {
@@ -27,7 +27,7 @@ export const create_school = async (req: Request, res: Response) => {
 				responses.failure(res,err.message)
 			}
 			else
-				responses.create_success(school,res)
+				responses.create_success({school},res)
 		})
 	}
 	else
@@ -46,7 +46,8 @@ export const update_school = (req: Request, res: Response) => {
 			responses.failure(res,err.message)
         }
        	else
-			responses.success(school,res)
+			responses.success({school},res)
+
     })
 }
 
@@ -58,7 +59,7 @@ export const disable_school = (req: Request, res: Response) => {
         	responses.failure(res,err.message)
 		}
 		else{
- 			responses.success(school,res)
+ 			responses.success({school},res)
 
             Section.disableMany(id);
         }

@@ -10,7 +10,7 @@ export const faculty_list = async (req: Request, res: Response) => {
                                .skip(skip)
                                .limit(10)
                                .exec();
-	responses.success(faculties,res,page)	
+	responses.success({faculties},res,page)	
 }
 
 export const create_faculty = async (req: Request, res: Response) => {
@@ -23,7 +23,7 @@ export const create_faculty = async (req: Request, res: Response) => {
 			responses.failure(res,err.message)
 		}
 		else
-			responses.create_success(faculty,res)
+			responses.create_success({faculty},res)
 	})
 }
 
@@ -39,7 +39,7 @@ export const update_faculty = (req: Request, res: Response) => {
         	responses.failure(res,err.message)
 		}
 		else
-			responses.success(faculty,res)
+			responses.success({faculty},res)
     })
 }
 
@@ -52,7 +52,7 @@ export const disable_faculty = (req: Request, res: Response) => {
         	responses.failure(res,err.message)
 		}
 		else
-			responses.success(faculty,res)
+			responses.success({faculty},res)
 			await School.updateMany({faculty: id},{status:'disabled',deleted_date: new Date()});
     })
 }
