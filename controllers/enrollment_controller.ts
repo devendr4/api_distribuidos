@@ -13,7 +13,7 @@ export const enrollment_list = async (req: Request, res: Response ) => {
                                   .skip(skip)
                                   .limit(10)
                                   .exec();
-    success(enrollments, res, page);
+    success({enrollments}, res, page);
 
 }
 
@@ -44,7 +44,7 @@ export const create_enrollment = async (req: Request, res: Response) => {
                 return failure(res, err.message);
             }
             await inscripcion.populate('section','name description').populate('person','dni first_name last_name').execPopulate();
-            create_success(inscripcion, res);
+            create_success({enrollment: inscripcion}, res);
         })
     }
 
@@ -53,11 +53,11 @@ export const create_enrollment = async (req: Request, res: Response) => {
 export const delete_enrollment = (req: Request, res: Response) =>{
     const id = req.params.id;
     Enrollment.findByIdAndUpdate(id, {status: 'disabled', deleted_date: new Date()}, {new: true, runValidators: true},
-    (err:any, seccion:any) => {
+    (err:any, inscripcion:any) => {
         if (err) {
             return failure(res, err.message);
         }
-        success(seccion, res);
+        success({enrollment: inscripcion}, res);
     });
 
 }

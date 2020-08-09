@@ -13,7 +13,7 @@ export const section_list = async (req: Request, res: Response) => {
                                .skip(skip)
                                .limit(10)
                                .exec();
-    success(sections, res, page)
+    success({sections}, res, page)
 
 }
 
@@ -68,7 +68,7 @@ export const create_section = async (req: Request, res: Response) => {
                     return failure(res, err.message)
                 }
                 await seccion.populate('school','name').execPopulate();
-                create_success(seccion, res);
+                create_success({section: seccion}, res);
             });
         }else {
             Section.create(section,async (err:any, seccion:any) => {
@@ -77,7 +77,7 @@ export const create_section = async (req: Request, res: Response) => {
                 }
                 await seccion.populate('school','name').execPopulate();
 
-                create_success(seccion, res);
+                create_success({section: seccion}, res);
             })
         }
     }else {
@@ -110,7 +110,7 @@ export const update_section = async (req: Request, res: Response) => {
             }
 
             await seccion.populate('school','name').execPopulate();
-            return success(seccion, res);
+            return success({section: seccion}, res);
         });
 
     }else{
@@ -126,7 +126,7 @@ export const delete_section =  (req: Request, res: Response) => {
         if (err) {
             return failure(res, err.message)
         }
-        success(seccion, res)
+        success({section: seccion}, res)
         Enrollment.disableMany('section', id);
     });
 

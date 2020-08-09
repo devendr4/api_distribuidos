@@ -3,6 +3,7 @@ import Server from "./classes/server";
 import mongoose from "mongoose";
 import bodyParser from 'body-parser';
 import {router} from "./routes";
+import cors from 'cors';
 
 
 const server = new Server();
@@ -29,6 +30,8 @@ mongoose.connect(
     }
 );
 
+// cors
+server.app.use(cors({ origin: true, credentials: true }));
 // iniciar el servidor
 server.start( () => {
     console.log(`Servidor corriendo en el puerto ${ server.port }`);

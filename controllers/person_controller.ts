@@ -10,7 +10,7 @@ export const person_list = async (req: Request, res: Response) => {
                                .skip(skip)
                                .limit(10)
                                .exec();
-    success(people, res, page);
+    success({people}, res, page);
 }
 
 export const create_person= async (req: Request, res: Response) =>{
@@ -30,7 +30,7 @@ export const create_person= async (req: Request, res: Response) =>{
             if (err) {
                 return failure(res, err.message);
             }
-            return create_success( dni, res)
+            return create_success({person: dni} , res)
         })
     }
     else{
@@ -38,7 +38,7 @@ export const create_person= async (req: Request, res: Response) =>{
             if (err) {
                 return failure(res, err.message);
             }
-            return create_success( persona, res)
+            return create_success({person: persona} , res)
         })
 
     }
@@ -57,7 +57,7 @@ export const update_person = (req: Request, res: Response) =>{
         if (err){
             return failure(res, err.message);
         }
-        return success(persona, res);
+        return success({person: persona}, res);
       });
 
 
@@ -72,7 +72,7 @@ export const delete_person = (req: Request, res: Response) => {
         if (err) {
             return failure(res, err.message)
         }
-        success(persona, res);
+        success({person: persona}, res);
         Enrollment.disableMany('person', id);
     });
 }

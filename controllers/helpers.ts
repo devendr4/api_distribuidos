@@ -1,27 +1,19 @@
 import {NextFunction, Request, Response} from 'express'
 export const success = (model: Object, res:any, page: Number = 0) => {
 	if (page == 0){
-		res.json({
-			ok: true,
-			model
-		})
+        const objeto = {...{ok: true}, ...model}
+		res.json(objeto);
 	}
 	else {
 		//school
-		res.json({
-			ok: true,
-			page,
-			model
-		})
+        const objeto = {...{ok: true, page}, ...model}
+		res.json(objeto)
 	}
 }
 
 export const create_success = (model: Object, res:any) => {
-       // const objecto = {...{ok:true}, ...model}
-		res.status(201).json({
-            ok:true,
-            model
-        })
+        const objeto = {...{ok:true}, ...model}
+		res.status(201).json(objeto)
 }
 
 export const failure = (res: any, message: string) => {
