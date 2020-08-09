@@ -6,9 +6,9 @@ import schools from './schools';
 import faculties from './faculties';
 export const router = express.Router();
 // Declaracion de todas las rutas
-router.use('/people', people);
-router.use('/sections', sections);
-router.use('/schools', schools);
-router.use('/faculties', faculties);
-router.use('/enrollments', enrollments);
+router.use('/v1/people', people);
+router.use('/v1/sections', sections);
+router.use('/v1/schools', schools);
+router.use('/v1/faculties', faculties);
+router.use('/v1/enrollments', enrollments);
 
