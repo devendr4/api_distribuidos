@@ -1,7 +1,7 @@
 import {Person} from "../models/person"
 import {Request, Response} from "express";
 import {Enrollment} from "../models/enrollment";
-
+import {success, failure, create_success} from "./helpers";
 
 export const person_list = async (req: Request, res: Response) => {
     const page = Number(req.query.page) || 1;
@@ -10,11 +10,7 @@ export const person_list = async (req: Request, res: Response) => {
                                .skip(skip)
                                .limit(10)
                                .exec();
-    res.json({
-        ok: true,
-        page,
-        people
-    })
+    success(people, res, page);
 }
 
 export const create_person= async (req: Request, res: Response) =>{
@@ -32,34 +28,19 @@ export const create_person= async (req: Request, res: Response) =>{
         dni.status = 'enabled';
         dni.save((err:any, dni:any) => {
             if (err) {
-
-                res.status(404).json({
-                    ok: false,
-                    error: err.message
-                })
-            return;
+                return failure(res, err.message);
             }
-            res.status(201).json({
-                ok: true,
-                person: dni
-            })
-            return;
+            return create_success( dni, res)
         })
     }
     else{
         Person.create(person, (err:any, persona:any) => {
             if (err) {
-                res.status(404).json({
-                    ok: false,
-                    error: err.message
-                })
-                return;
+                return failure(res, err.message);
             }
-            res.status(201).json({
-                ok: true,
-                person: persona
-            })
+            return create_success( persona, res)
         })
+
     }
 }
 
@@ -74,17 +55,11 @@ export const update_person = (req: Request, res: Response) =>{
     Person.findByIdAndUpdate(id, person, {new: true, runValidators: true,context: 'query'},
     (err:any, persona:any) => {
         if (err){
-            res.status(404).json({
-                ok: false,
-                error: err.message
-            })
-            return;
+            return failure(res, err.message);
         }
-        res.json({
-            ok: true,
-            person: persona
-        })
-    });
+        return success(persona, res);
+      });
+
 
 }
 
@@ -95,16 +70,9 @@ export const delete_person = (req: Request, res: Response) => {
     async(err:any, persona:any) => {
 
         if (err) {
-            res.status(404).json({
-                ok: false,
-                error: err.message
-            })
-            return;
+            return failure(res, err.message)
         }
-        res.json({
-            ok: true,
-            person: persona
-        })
+        success(persona, res);
         Enrollment.disableMany('person', id);
     });
 }

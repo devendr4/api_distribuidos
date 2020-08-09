@@ -2,6 +2,7 @@ import {Enrollment} from "../models/enrollment"
 import {Request, Response} from 'express'
 import {Person} from "../models/person";
 import {Section} from "../models/section";
+import {success, failure,create_success} from "./helpers";
 
 export const enrollment_list = async (req: Request, res: Response ) => {
     const page = Number(req.query.page) || 1;
@@ -12,11 +13,7 @@ export const enrollment_list = async (req: Request, res: Response ) => {
                                   .skip(skip)
                                   .limit(10)
                                   .exec();
-    res.json({
-        ok: true,
-        page,
-        enrollments
-    })
+    success(enrollments, res, page);
 
 }
 
@@ -31,42 +28,23 @@ export const create_enrollment = async (req: Request, res: Response) => {
         persona = await Person.findById(enrollment.person).exec();
         seccion = await Section.findById(enrollment.section).exec();
     }catch(err){
-        res.status(404).json({
-            ok: false,
-            error: 'La persona o la seccion son erroneas'
-        });
-        return;
+        return failure(res, 'La persona o la seccion son erroneas')
     } finally {
         if (persona.status == 'disabled' || seccion.status == 'disabled'){
-            res.status(404).json({
-                ok: false,
-                error: 'Persona o Seccion no disponibles'
-            });
-            return;
+            return failure(res, 'La persona o la seccion no disponibles')
         }
     }
     const exist:any = await Enrollment.findOne(
         {status: 'enabled', section: enrollment.section, person: enrollment.person}).exec();
     if (exist) {
-        res.status(404).json({
-            ok: false,
-            error: 'Ya se encuentra inscrito en esa seccion'
-        })
-        return
+        return failure(res, 'Ya se encuentra inscrito en esa seccion')
     }else {
         Enrollment.create(enrollment, async (err:any, inscripcion:any)=>{
             if(err){
-                res.status(404).json({
-                    ok: false,
-                    error: err.message
-                })
-                return;
+                return failure(res, err.message);
             }
             await inscripcion.populate('section','name description').populate('person','dni first_name last_name').execPopulate();
-            res.json({
-                ok: true,
-                enrollment: inscripcion
-            })
+            create_success(inscripcion, res);
         })
     }
 
@@ -77,16 +55,9 @@ export const delete_enrollment = (req: Request, res: Response) =>{
     Enrollment.findByIdAndUpdate(id, {status: 'disabled', deleted_date: new Date()}, {new: true, runValidators: true},
     (err:any, seccion:any) => {
         if (err) {
-            res.status(404).json({
-                ok: false,
-                error: err.message
-            })
-            return;
+            return failure(res, err.message);
         }
-        res.json({
-            ok: true,
-            section: seccion
-        })
+        success(seccion, res);
     });
 
 }

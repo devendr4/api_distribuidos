@@ -2,6 +2,7 @@ import {Section} from "../models/section"
 import { Request, Response } from 'express'
 import {Enrollment} from "../models/enrollment";
 import {School} from "../models/school";
+import {success, failure, create_success} from "./helpers";
 
 
 export const section_list = async (req: Request, res: Response) => {
@@ -12,11 +13,7 @@ export const section_list = async (req: Request, res: Response) => {
                                .skip(skip)
                                .limit(10)
                                .exec();
-    res.json({
-        ok: true,
-        page,
-        sections
-    })
+    success(sections, res, page)
 
 }
 
@@ -24,11 +21,7 @@ export const section_by_enrollment_type = async (req: Request, res: Response) =>
     const id = req.params.id;
     const type = req.params.type;
     if (type !== 'teachers' && type !== 'students'){
-        res.status(404).json({
-            ok: false,
-            error: 'Opcion invalida'
-        })
-        return;
+        return failure(res, 'opcion invalida')
     }
     const section:any = await Section.findOne({_id: id, status: 'enabled'}).exec();
     if (section) {
@@ -45,10 +38,7 @@ export const section_by_enrollment_type = async (req: Request, res: Response) =>
         object[type] = people
         res.json(object)
     }else{
-        res.json({
-            ok: false,
-            error: 'La seccion no existe'
-        })
+        return failure(res, 'La seccion no existe')
     }
 
 }
@@ -75,39 +65,23 @@ export const create_section = async (req: Request, res: Response) => {
             Section.findByIdAndUpdate(name._id, section, {new: true, runValidators: true, context: 'query'},
             async (err:any, seccion:any) => {
                 if (err){
-                    res.status(404).json({
-                        ok: false,
-                        error: err.message
-                    })
-                    return;
+                    return failure(res, err.message)
                 }
                 await seccion.populate('school','name').execPopulate();
-                res.json({
-                    ok: true,
-                    section: seccion
-                })
+                create_success(seccion, res);
             });
         }else {
             Section.create(section,async (err:any, seccion:any) => {
                 if (err) {
-                    res.status(404).json({
-                        ok: false,
-                        error: err.message
-                    })
-                    return;
+                    return failure(res, err.message);
                 }
                 await seccion.populate('school','name').execPopulate();
-                res.status(201).json({
-                    ok: true,
-                    section: seccion
-                })
+
+                create_success(seccion, res);
             })
         }
     }else {
-        res.status(404).json({
-            ok: false,
-            error: 'Escuela no existe'
-        })
+        return failure(res, 'Escuela no existe');
     }
 
 }
@@ -132,25 +106,15 @@ export const update_section = async (req: Request, res: Response) => {
         Section.findByIdAndUpdate(id, section, {new: true, runValidators: true, context: 'query'},
         async(err:any, seccion:any) => {
             if (err){
-                res.status(404).json({
-                    ok: false,
-                    error: err.message
-                })
-                return;
+                return failure(res, err.message);
             }
 
             await seccion.populate('school','name').execPopulate();
-            res.json({
-                ok: true,
-                section: seccion
-            })
+            return success(seccion, res);
         });
 
     }else{
-        res.status(404).json({
-            ok: false,
-            error: 'La escuela no existe'
-        })
+        return failure(res, 'La escuela no existe')
     }
 
 }
@@ -160,16 +124,9 @@ export const delete_section =  (req: Request, res: Response) => {
     Section.findByIdAndUpdate(id, {status: 'disabled', deleted_date: new Date()}, {new: true, runValidators: true},
       (err:any, seccion:any) => {
         if (err) {
-            res.status(404).json({
-                ok: false,
-                error: err.message
-            })
-            return;
+            return failure(res, err.message)
         }
-        res.json({
-            ok: true,
-            section: seccion
-        })
+        success(seccion, res)
         Enrollment.disableMany('section', id);
     });
 
