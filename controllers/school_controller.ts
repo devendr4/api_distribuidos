@@ -2,7 +2,7 @@ import {School} from '../models/school'
 import {Section} from "../models/section"
 import {Request, Response} from "express"
 import {validate_faculty} from "../controllers/faculty_controller"
-export const school_list = async (req: Request, res: Response) => {	
+export const school_list = async (req: Request, res: Response) => {
 	const page = Number(req.query.page) || 1;
 	const skip = (page -1) * 10;
 	const schools = await School.find({status:'enabled'}).populate('faculty', 'name').skip(skip).limit(10).exec();
@@ -31,7 +31,7 @@ export const create_school = async (req: Request, res: Response) => {
 			ok: true,
 			school: school
 		})
-	})	
+	})
 	validate_faculty(school.faculty)
 }
 
