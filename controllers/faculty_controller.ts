@@ -1,6 +1,7 @@
 import {Faculty} from '../models/faculty'
 import {Request, Response} from "express"
 import {School} from "../models/school"
+import * as responses from "../controllers/helpers"
 
 export const faculty_list = async (req: Request, res: Response) => {	
 	const page = Number(req.query.page) || 1;
@@ -9,11 +10,7 @@ export const faculty_list = async (req: Request, res: Response) => {
                                .skip(skip)
                                .limit(10)
                                .exec();
-	res.json({
-		ok: true,
-		page,
-		faculties
-	})
+	responses.success(faculties,res,page)	
 }
 
 export const create_faculty = async (req: Request, res: Response) => {
@@ -23,16 +20,10 @@ export const create_faculty = async (req: Request, res: Response) => {
 	}
 	Faculty.create(faculty, (err:any, faculty:any)=>{
 		if (err) {
-			res.status(404).json({
-				ok: false,
-				error: err.message
-			})
-			return;
+			responses.create_success(faculty,res)
 		}
-		res.status(201).json({
-			ok: true,
-			faculty: faculty
-		})
+		else
+			responses.failure(res,err.message)
 	})
 }
 
@@ -45,39 +36,34 @@ export const update_faculty = (req: Request, res: Response) => {
 	Faculty.findByIdAndUpdate(id, faculty, {new: true, runValidators: true, context: 'query'},
     (err:any, faculty:any) => {
         if (err){
-            res.status(404).json({
-                ok: false,
-                error: err.message
-            })
-            return
-        }
-        res.json({
-            ok: true,
-            faculty: faculty
-        })
+        	responses.failure(res,err.message)
+		}
+		else
+			responses.success(faculty,res)
     })
 }
 
 export const disable_faculty = (req: Request, res: Response) => {
 	const id = req.params.id;
-	Faculty.findByIdAndUpdate(id, {status:'disabled',deleted_date: new Date()}, {new: true, runValidators: true},
-							 async(err: any, faculty: any) => {
+	Faculty.findByIdAndUpdate(id, {status:'disabled',deleted_date: new Date()}, 
+							  {new: true, runValidators: true},
+							  async(err: any, faculty: any) => {
         if (err) {
-            res.status(404).json({
-                ok: false,
-                error: err.message
-            })
-            return;
-        }
-        res.json({
-            ok: true,
-            faculty: faculty
-        })
-		await School.updateMany({faculty: id},{status:'disabled',deleted_date: new Date()});
+        	responses.failure(res,err.message)
+		}
+		else
+			responses.success(faculty,res)
+			await School.updateMany({faculty: id},{status:'disabled',deleted_date: new Date()});
     })
 }
 
-export const validate_faculty = (id: any) => {
-	const a = Faculty.findById(id).exec()
-	console.log(a) 
+export const validate_faculty = async (id: any) => {
+	var a = await Faculty.findOne({_id: id,status:'disabled'}, (err: any ,faculty: any) => {	
+	}).exec()
+	if (a){
+		return false
+	}
+	else
+		return true
 }
+

@@ -1,4 +1,4 @@
-import mongoose, { Schema  } from 'mongoose';
+import { Schema  } from 'mongoose';
 import {BaseEntity} from './base_entity';
 
 const facultySchema = new Schema({

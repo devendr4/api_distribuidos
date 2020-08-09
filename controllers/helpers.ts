@@ -1,12 +1,30 @@
-/*import {Request, Response} from "express"
-import from mod
-export const school_list = async (req: Request, res: Response) => {	
-	const page = Number(req.query.page) || 1;
-	const skip = (page -1) * 10;
-	const schools = await School.find({status:'enabled'}).populate('faculty', 'name').skip(skip).limit(10).exec();
-	res.json({
-		ok: true,
-		page,
-		schools
+export const success = (model: Object, res:any, page: Number = 0) => {	
+	if (page == 0){
+		res.json({
+			ok: true,
+			model
+		})	
+	}
+	else {
+		res.json({
+			ok: true,
+			page,
+			model
+		})	
+	}
+}
+
+export const create_success = (model: Object, res:any) => {
+		res.status(201).json({
+			ok: true,
+			model
+		})	
+}
+
+export const failure = (res: any, message: String) => {
+	res.status(404).json({
+		ok: false,
+		error: message 
 	})
-}*/
+}
+

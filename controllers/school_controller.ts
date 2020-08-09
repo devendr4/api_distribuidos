@@ -2,15 +2,16 @@ import {School} from '../models/school'
 import {Section} from "../models/section"
 import {Request, Response} from "express"
 import {validate_faculty} from "../controllers/faculty_controller"
+import * as responses from "../controllers/helpers"
+
 export const school_list = async (req: Request, res: Response) => {
 	const page = Number(req.query.page) || 1;
 	const skip = (page -1) * 10;
-	const schools = await School.find({status:'enabled'}).populate('faculty', 'name').skip(skip).limit(10).exec();
-	res.json({
-		ok: true,
-		page,
-		schools
-	})
+	const schools = await School.find({status:'enabled'}).populate('faculty', 'name')
+	.skip(skip)
+	.limit(10)
+	.exec()
+	responses.success(schools,res,page)
 }
 
 export const create_school = async (req: Request, res: Response) => {
@@ -19,20 +20,18 @@ export const create_school = async (req: Request, res: Response) => {
 		description: req.body.last_name,
 		faculty: req.body.faculty
 	}
-	School.create(school, (err:any, school:any) => {
-		if (err) {
-			res.status(404).json({
-				ok: false,
-				error: err.message
-			})
-		return;
-		}
-		res.status(201).json({
-			ok: true,
-			school: school
+	var validate = await validate_faculty(school.faculty)
+	if (validate){
+		School.create(school, (err:any, school:any) => {
+			if (err) {
+				responses.failure(res,err.message)
+			}
+			else
+				responses.create_success(school,res)
 		})
-	})
-	validate_faculty(school.faculty)
+	}
+	else
+		responses.failure(res,'La facultad ingresada no se encuentra activa')
 }
 
 export const update_school = (req: Request, res: Response) => {
@@ -44,16 +43,10 @@ export const update_school = (req: Request, res: Response) => {
 	School.findByIdAndUpdate(id, school, {new: true, runValidators: true, context: 'query'},
     (err:any, school:any) => {
         if (err){
-            res.status(404).json({
-                ok: false,
-                error: err.message
-            })
-            return
+			responses.failure(res,err.message)
         }
-        res.json({
-            ok: true,
-            school: school
-        })
+       	else
+			responses.success(school,res)
     })
 }
 
@@ -62,17 +55,13 @@ export const disable_school = (req: Request, res: Response) => {
 	School.findByIdAndUpdate(id, {status:'disabled',deleted_date: new Date()}, {new: true, runValidators: true},
 							 (err: any, school: any) => {
         if (err) {
-            res.status(404).json({
-                ok: false,
-                error: err.message
-            })
-            return;
+        	responses.failure(res,err.message)
+		}
+		else{
+ 			responses.success(school,res)
+
+            Section.disableMany(id);
         }
-        res.json({
-            ok: true,
-            school: school
-        })
-        //Section.disableMany(id);
     });
 }
 
