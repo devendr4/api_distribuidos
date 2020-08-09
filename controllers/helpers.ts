@@ -7,6 +7,7 @@ export const success = (model: Object, res:any, page: Number = 0) => {
 		})
 	}
 	else {
+		//school
 		res.json({
 			ok: true,
 			page,

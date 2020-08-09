@@ -20,10 +20,10 @@ export const create_faculty = async (req: Request, res: Response) => {
 	}
 	Faculty.create(faculty, (err:any, faculty:any)=>{
 		if (err) {
-			responses.create_success(faculty,res)
+			responses.failure(res,err.message)
 		}
 		else
-			responses.failure(res,err.message)
+			responses.create_success(faculty,res)
 	})
 }
 

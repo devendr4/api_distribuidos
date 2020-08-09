@@ -6,6 +6,8 @@ const enrollments = Router();
 enrollments.get('/',enrollment_list);
 // /enrollments/
 enrollments.post('/',create_enrollment);
+
 enrollments.delete('/:id',delete_enrollment);
+
 export default enrollments;
 

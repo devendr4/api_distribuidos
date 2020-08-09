@@ -6,9 +6,14 @@ const sections = Router();
 
 // /sections/
 sections.get('/',section_list);
+
 sections.get('/:id/:type', section_by_enrollment_type);
+
 sections.post('/', validate_name_description, create_section);
+
 sections.put('/:id',validate_name_description, update_section);
+
 sections.delete('/:id', delete_section);
+
 export default sections;
 
